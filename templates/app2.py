@@ -1,52 +1,45 @@
 import pandas as pd
 from flask import Flask, render_template, request
 import joblib
-import os
-import sklearn.ensemble._forest
-app2 = Flask(__name__)
 
-# Load model and feature order
-model = joblib.load("C:/AI lab/TrafficTelligence Advanced Traffic Volume Estimation with Machine Learning/model.joblib")
-feature_order = joblib.load("C:/AI lab/TrafficTelligence Advanced Traffic Volume Estimation with Machine Learning/feature_order.joblib")
+app = Flask(__name__)
 
-@app2.route('/')
+model = joblib.load("model.joblib")
+feature_order = joblib.load("feature_order.joblib")
+
+@app.route('/')
 def home():
     return render_template('index1.html')
 
-@app2.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def predict():
     try:
         form = request.form
 
-        # Prepare numeric inputs (excluding traffic_volume)
         input_values = {
-            'rain': float(form['rain']),
-            'snow': float(form['snow']),
-            'day': int(form['day']),
-            'month': int(form['month']),
-            'year': int(form['year']),
-            'hours': int(form['hours']),
-            'minutes': int(form['minutes']),
-            'seconds': int(form['seconds']),
+            'rain': float(form.get('rain', 0)),
+            'snow': float(form.get('snow', 0)),
+            'day': int(form.get('day', 0)),
+            'month': int(form.get('month', 0)),
+            'year': int(form.get('year', 0)),
+            'hours': int(form.get('hours', 0)),
+            'minutes': int(form.get('minutes', 0)),
+            'seconds': int(form.get('seconds', 0)),
         }
 
-        # Initialize input dictionary with zeroed features
         input_data = {col: 0 for col in feature_order}
         input_data.update(input_values)
 
-        # One-hot encode holiday and weather
-        holiday_feature = f"holiday_{form['holiday']}"
-        weather_feature = f"weather_{form['weather']}"
+        holiday_feature = f"holiday_{form.get('holiday', '')}"
+        weather_feature = f"weather_{form.get('weather', '')}"
 
         if holiday_feature in input_data:
             input_data[holiday_feature] = 1
         if weather_feature in input_data:
             input_data[weather_feature] = 1
 
-        # Create DataFrame for prediction
         final_input = pd.DataFrame([input_data])
 
-        # Predict traffic volume
         prediction = model.predict(final_input)[0]
         estimated_volume = round(prediction, 2)
 
@@ -56,4 +49,4 @@ def predict():
         return f"Error in prediction logic: {str(e)}"
 
 if __name__ == '__main__':
-    app2.run(debug=True, use_reloader=False)
+    app.run(debug=True)
