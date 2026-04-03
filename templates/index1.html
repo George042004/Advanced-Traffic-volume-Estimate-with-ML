@@ -27,6 +27,7 @@
             margin-top: 6px;
             margin-bottom: 16px;
             border-radius: 5px;
+            border: 1px solid #ccc;
         }
         button {
             background-color: #4CAF50;
@@ -39,6 +40,7 @@
     <div class="Login">
         <h1 style="text-align: center;">Traffic Volume Estimation</h1>
         <form action="{{ url_for('predict') }}" method="post">
+
             <label for="holiday">Holiday:</label>
             <select id="holiday" name="holiday" required>
                 <option value="None">None</option>
@@ -47,7 +49,7 @@
                 <option value="Thanksgiving Day">Thanksgiving Day</option>
                 <option value="Christmas Day">Christmas Day</option>
                 <option value="New Years Day">New Years Day</option>
-                <option value="Washingtons Birthday">Washington’s Birthday</option>
+                <option value="Washingtons Birthday">Washingtons Birthday</option>
                 <option value="Memorial Day">Memorial Day</option>
                 <option value="State Fair">State Fair</option>
                 <option value="Labor Day">Labor Day</option>
@@ -70,34 +72,31 @@
             </select>
 
             <label>Temperature:</label>
-            <input type="number" name="temp" placeholder="Temperature (°C)" required>
+            <input type="number" name="temp" required>
 
             <label>Rain:</label>
-            <input type="number" step="0.01" name="rain" placeholder="Rain (mm)" required>
+            <input type="number" step="0.01" name="rain" required>
 
             <label>Snow:</label>
-            <input type="number" step="0.01" name="snow" placeholder="Snow (mm)" required>
-
-            <label>Traffic Volume:</label>
-            <input type="number" name="traffic_volume" placeholder="Traffic Volume" required>
+            <input type="number" step="0.01" name="snow" required>
 
             <label>Year:</label>
-            <input type="number" name="year" min="2012" max="2025" placeholder="Year" required>
+            <input type="number" name="year" min="2012" max="2025" required>
 
             <label>Month:</label>
-            <input type="number" name="month" min="1" max="12" placeholder="Month" required>
+            <input type="number" name="month" min="1" max="12" required>
 
             <label>Day:</label>
-            <input type="number" name="day" min="1" max="31" placeholder="Day" required>
+            <input type="number" name="day" min="1" max="31" required>
 
             <label>Hours:</label>
-            <input type="number" name="hours" min="0" max="23" placeholder="Hours" required>
+            <input type="number" name="hours" min="0" max="23" required>
 
             <label>Minutes:</label>
-            <input type="number" name="minutes" min="0" max="59" placeholder="Minutes" required>
+            <input type="number" name="minutes" min="0" max="59" required>
 
             <label>Seconds:</label>
-            <input type="number" name="seconds" min="0" max="59" placeholder="Seconds" required>
+            <input type="number" name="seconds" min="0" max="59" required>
 
             <button type="submit">Predict</button>
         </form>
