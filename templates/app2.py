@@ -1,11 +1,14 @@
 import pandas as pd
 from flask import Flask, render_template, request
 import joblib
+import os
 
 app = Flask(__name__)
 
-model = joblib.load("model.joblib")
-feature_order = joblib.load("feature_order.joblib")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+model = joblib.load(os.path.join(BASE_DIR, "model.joblib"))
+feature_order = joblib.load(os.path.join(BASE_DIR, "feature_order.joblib"))
 
 @app.route('/')
 def home():
@@ -27,21 +30,26 @@ def predict():
             'seconds': int(form.get('seconds', 0)),
         }
 
-        input_data = {col: 0 for col in feature_order}
+        input_data = dict.fromkeys(feature_order, 0)
         input_data.update(input_values)
 
-        holiday_feature = f"holiday_{form.get('holiday', '')}"
-        weather_feature = f"weather_{form.get('weather', '')}"
+        holiday = form.get('holiday', '').strip()
+        weather = form.get('weather', '').strip()
+
+        holiday_feature = f"holiday_{holiday}"
+        weather_feature = f"weather_{weather}"
 
         if holiday_feature in input_data:
             input_data[holiday_feature] = 1
+
         if weather_feature in input_data:
             input_data[weather_feature] = 1
 
         final_input = pd.DataFrame([input_data])
+        final_input = final_input[feature_order]
 
         prediction = model.predict(final_input)[0]
-        estimated_volume = round(prediction, 2)
+        estimated_volume = round(float(prediction), 2)
 
         return render_template('result.html', prediction=estimated_volume)
 
